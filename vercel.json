@@ -1,0 +1,18 @@
+{
+    "rewrites": [
+      {
+        "source": "/(.*)",
+        "destination": "/api/app"
+      }
+    ],
+    "regions": [
+      "hkg1"
+    ],
+    "trailingSlash": false,
+    "crons": [
+      {
+        "path": "/",
+        "schedule": "6 6 * * *"
+      }
+    ]
+  }
