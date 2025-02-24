@@ -12,7 +12,7 @@ class Settings(BaseModel):
     """
     Config for the application.
     """
-    KV_URL: str = ''
+    REDIS_URL: str = ''
     redis_prefix: str = ''
     corp_id: str = ''
     corp_secret: str = ''
@@ -61,7 +61,7 @@ class ParamsModel(BaseModel):
 def auth_request(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        redis_url = settings.KV_URL.replace('redis', 'rediss', 1)
+        redis_url = settings.REDIS_URL
         redis_client = Redis.from_url(redis_url)
         redis_key = f"{settings.redis_prefix}:{settings.corp_id}_{settings.agent_id}_access_token"
         access_token = unicode_convert(redis_client.get(redis_key))
