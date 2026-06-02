@@ -4,14 +4,21 @@ import traceback
 import requests
 from flask import Flask, request
 from pydantic import BaseModel
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from redis import Redis
 from pathlib import Path
-import os
 
-class Settings(BaseModel):
-    """
-    Config for the application.
-    """
+rootPath = Path(__file__).parent.parent
+
+
+class Settings(BaseSettings):
+    """Config for the application, loaded from environment variables and .env file."""
+    model_config = SettingsConfigDict(
+        env_file=str(rootPath / '.env'),
+        env_file_encoding='utf-8',
+        extra='ignore',
+    )
+
     REDIS_URL: str = ''
     redis_prefix: str = ''
     corp_id: str = ''
@@ -21,19 +28,7 @@ class Settings(BaseModel):
     sendKey: str = ''
 
 
-rootPath = Path(__file__).parent.parent
-
-envFile = rootPath / '.env'
-
-if envFile.exists():
-    with open(envFile, 'r') as f:
-        env = f.readlines()
-        settings = Settings(**{line.split('=', 1)[0].strip().strip('"').strip("'"): line.split('=', 1)[1].strip().strip('"').strip("'") for line in env})
-else:
-    env_map = dict(os.environ)
-    settings = Settings(**env_map)
-
-print(settings)
+settings = Settings()
 
 app = Flask(__name__)
 
